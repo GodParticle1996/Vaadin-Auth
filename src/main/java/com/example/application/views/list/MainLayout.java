@@ -1,5 +1,6 @@
 package com.example.application.views.list;
 
+import com.example.application.security.SecurityService;
 import com.example.application.security.SecurityUtils;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
@@ -13,7 +14,12 @@ import com.vaadin.flow.router.RouterLink;
 
 public class MainLayout extends AppLayout {
 
-    public MainLayout() {
+    private final SecurityUtils securityUtils;
+    private final SecurityService securityService;
+
+    public MainLayout(SecurityUtils securityUtils, SecurityService securityService) {
+        this.securityUtils = securityUtils;
+        this.securityService = securityService;
         createHeader();
         createDrawer();
     }
@@ -25,10 +31,10 @@ public class MainLayout extends AppLayout {
         HorizontalLayout header = new HorizontalLayout(new DrawerToggle(), logo);
 
         // Add logout button only if the user is logged in
-        if (SecurityUtils.isUserLoggedIn()) {
+        if (securityUtils.isUserLoggedIn()) {
             Button logoutButton = new Button("Logout", event -> {
-                // Perform logout and redirect to login page
-                getElement().executeJs("window.location.href = '/logout'");
+                // Use SecurityService to handle logout
+                securityService.logout();
             });
             header.add(logoutButton);
         }
